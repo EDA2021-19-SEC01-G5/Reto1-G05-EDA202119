@@ -28,9 +28,12 @@
 from DISClib.DataStructures.arraylist import addLast, getElement
 import config as cf
 from DISClib.ADT import list as lt
-from DISClib.Algorithms.Sorting import shellsort 
+from DISClib.Algorithms.Sorting import shellsort
+from DISClib.Algorithms.Sorting import insertionsort 
+from DISClib.Algorithms.Sorting import selectionsort
 from DISClib.Algorithms.Sorting import mergesort 
 assert cf
+import time
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
@@ -40,13 +43,19 @@ los mismos.
 # Construccion de modelos
 
 # Funciones para agregar informacion al catalogo
-def newCatalog():
+def newCatalog(tipo_lista):
     """
     Crea el catalogo con la información de videos y de categorias
     """
+    if int(tipo_lista) == 0:
+        ED = "ARRAY_LIST"
+    elif int(tipo_lista) == 1:
+        ED = "SINGLE_LINKED"
+    else:
+        return None
     catalog = {"videos":None, "categorias":None}
-    catalog["videos"] = lt.newList("ARRAY_LIST")
-    catalog["categorias"] = lt.newList("ARRAY_LIST")
+    catalog["videos"] = lt.newList(ED)
+    catalog["categorias"] = lt.newList(ED)
     return catalog
 
 
@@ -68,10 +77,10 @@ def addCategoria(catalog, categoria):
 #Requerimiento 1
 
 def videosPorcategoriaPais(catalog, categoryId, pais):
-    cantidad_videos = lt.size(catalog["videos"])
+    cantidad_videos = lt.size(catalog)
     nueva_lista = lt.newList("ARRAY_LIST")
     for i in range(1,cantidad_videos+1):
-        elemento = lt.getElement(catalog["videos"],i)
+        elemento = lt.getElement(catalog,i)
         if elemento["category_id"]==categoryId and elemento["country"]==pais:
             lt.addLast(nueva_lista, elemento)
     return nueva_lista
@@ -82,22 +91,34 @@ def comparacionLikes(elemento1, elemento2):
     else:
         return False
 
-def requerimiento1(catalog, category_name, country, n):
+def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba, size):
+    opciones = {"0": selectionsort.sort, "1": insertionsort.sort, "2": shellsort.sort}
     categorias = catalog["categorias"]
     cantidad_categorias = lt.size(categorias)
     for i in range(1,cantidad_categorias+1):
         dato = lt.getElement(categorias,i)
         if dato["name"].lower() == category_name.lower():
             category_id = dato["id"]
-    nueva_lista = videosPorcategoriaPais(catalog,category_id,country)
-    organizada = mergesort.sort(nueva_lista, comparacionLikes)
+    if prueba == False:
+        nueva_lista = videosPorcategoriaPais(catalog["videos"],category_id,country)
+    else:
+        nueva_lista = lt.subList(catalog['videos'], 0, size)
+    # organizacion
+    t_start = time.time_ns()
+    organizada = opciones[tipo_organizacion](nueva_lista, comparacionLikes)
+    t_end = time.time_ns()
+
+    if prueba:
+        organizada = videosPorcategoriaPais(organizada,category_id,country)
+
+    t_total = t_end - t_start
     lista_final = lt.newList("ARRAY_LIST")
     for j in range(lt.size(organizada), lt.size(organizada)-n , -1):
         if j <= lt.size(organizada) and j> 0:
             lt.addLast(lista_final,lt.getElement(organizada,j))
         else:
             pass
-    return lista_final
+    return lista_final, t_total
 
 
 # requerimiento 2
