@@ -132,7 +132,7 @@ while True:
             category_name = input("Ingrese la categoria de la cual desea obtener información: ")
             country = input("Ingrese el pais del cual desea obtener información: ")
             n = int(input("Ingrese la cantidad de elemento que quiere ver: "))
-            tamaños = [1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000, 512000]
+            tamaños = [1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000]
             algoritmos = {"0": "selection sort", "1":"insertion sort" ,"2": "shell sort"}
             tiempos = []
             for a in range(len(algoritmos.keys())): 
