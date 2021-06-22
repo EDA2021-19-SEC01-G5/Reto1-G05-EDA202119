@@ -1,4 +1,5 @@
-﻿"""
+﻿
+"""
  * Copyright 2020, Departamento de sistemas y Computación, Universidad
  * de Los Andes
  *
@@ -20,12 +21,13 @@
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
+#from App.controller import initcatalog
 import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
 assert cf
-
+from tabulate import tabulate
 
 """
 La vista se encarga de la interacción con el usuario
@@ -37,10 +39,62 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("2- Conocer los videos con mas likes que son tendencia en un pais en la categoria deseada.")
+    print("3- Obtener el video que mas likes ha tenido en un pais especifico, cuyo ratio_likes_dislikes es altamente positivo")
 
-catalog = None
 
+
+def initCatalog():
+    return controller.initcatalog()
+
+
+def loadData(catalog):
+    controller.loadData(catalog)
+
+
+def printCategorias(catalog):
+    print("Información sobre las categorias: \n")
+    cantidad_categorias = lt.size(catalog["categorias"])
+    for i in range(1,cantidad_categorias+1):
+        print(lt.getElement(catalog["categorias"],i))
+    
+
+
+def printPrimervideo(catalog):
+    elemento = lt.firstElement(catalog["videos"])
+    print("\n Datos del primer video cargado: \n")
+    print("Titulo : ", elemento["title"])
+    print("Nombre del canal : ", elemento["channel_title"])
+    print("Fecha de trending : ", elemento["trending_date"])
+    print("Pais : ", elemento["country"])
+    print("Likes : ", elemento["likes"])
+    print("Dislikes : ",elemento["dislikes"], "\n")
+    print(elemento.keys())
+
+def requerimiento1(catalog, category_name, country, n):
+    lista = controller.requerimiento1(catalog,category_name, country,n)
+    longitud = lt.size(lista)
+    if longitud < n:
+        print("La cantidad de videos pedidos excede la cantidad posible. \n A continuación de muestran dos los libros de la categoria deseada y el pais deseado, organizados según la cantidad de likes")
+    header = ["", "trending date", "titulo", "nombre del canal", "fecha publicacion", "vistas", "likes", "dislikes"]
+    mostrar = []
+    for i in range(1, longitud+1):
+        elemento = lt.getElement(lista,i)
+        mostrar.append([i, elemento["trending_date"], elemento["title"], elemento["channel_title"], elemento["publish_time"],elemento["views"],elemento["likes"],elemento["dislikes"]])
+    print(tabulate(mostrar, headers=header))
+
+
+
+def requerimiento2(catalog, country):
+    datos = controller.requerimiento2(catalog,country)
+    header = ["\nTitulo: ", "Nombre del canal: ", "Pais: ", "ratio_likes_dislikes: ", "Dias: "]
+    longitud = lt.size(datos)
+    if longitud != 5:
+        print("No se entro un nombre de pais valido o dentro de los datos")
+    else:
+        for i in range(1, longitud+1):
+            print( header[i-1],lt.getElement(datos,i))
+    print("\n")
 """
 Menu principal
 """
@@ -49,10 +103,21 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        catalog = initCatalog()
+        loadData(catalog)
+        print("información cargada \n")
+        print("Total de registros de videos cargados : ", lt.size(catalog["videos"]),"\n")
+        printCategorias(catalog)
+        printPrimervideo(catalog)
 
     elif int(inputs[0]) == 2:
-        pass
-
+        category_name = input("Ingrese la categoria de la cual desea obtener información: ")
+        country = input("Ingrese el pais del cual desea obtener información: ")
+        n = int(input("Ingrese la cantidad de elemento que quiere ver: "))
+        requerimiento1(catalog,category_name, country, n)
+    elif int(inputs[0]) == 3:
+        country = input("Ingrese el pais del cual quiere obtener la información: ")
+        requerimiento2(catalog, country)
     else:
         sys.exit(0)
 sys.exit(0)

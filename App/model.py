@@ -25,9 +25,11 @@
  """
 
 
+from DISClib.DataStructures.arraylist import addLast, getElement
 import config as cf
 from DISClib.ADT import list as lt
-from DISClib.Algorithms.Sorting import shellsort as sa
+from DISClib.Algorithms.Sorting import shellsort 
+from DISClib.Algorithms.Sorting import mergesort 
 assert cf
 
 """
@@ -38,8 +40,124 @@ los mismos.
 # Construccion de modelos
 
 # Funciones para agregar informacion al catalogo
+def newCatalog():
+    """
+    Crea el catalogo con la información de videos y de categorias
+    """
+    catalog = {"videos":None, "categorias":None}
+    catalog["videos"] = lt.newList("ARRAY_LIST")
+    catalog["categorias"] = lt.newList("ARRAY_LIST")
+    return catalog
+
+
+def addVideo(catalog, video):
+    """
+    Adiciona la información de un video al catalogo
+    """
+    lt.addLast(catalog["videos"],video)
+
+def addCategoria(catalog, categoria):
+    """
+    adiciona a informacion de una categoria
+    """
+    lt.addLast(catalog["categorias"], categoria)
+
 
 # Funciones para creacion de datos
+
+#Requerimiento 1
+
+def videosPorcategoriaPais(catalog, categoryId, pais):
+    cantidad_videos = lt.size(catalog["videos"])
+    nueva_lista = lt.newList("ARRAY_LIST")
+    for i in range(1,cantidad_videos+1):
+        elemento = lt.getElement(catalog["videos"],i)
+        if elemento["category_id"]==categoryId and elemento["country"]==pais:
+            lt.addLast(nueva_lista, elemento)
+    return nueva_lista
+
+def comparacionLikes(elemento1, elemento2):
+    if int(elemento1["likes"]) < int(elemento2["likes"]):
+        return True
+    else:
+        return False
+
+def requerimiento1(catalog, category_name, country, n):
+    categorias = catalog["categorias"]
+    cantidad_categorias = lt.size(categorias)
+    for i in range(1,cantidad_categorias+1):
+        dato = lt.getElement(categorias,i)
+        if dato["name"].lower() == category_name.lower():
+            category_id = dato["id"]
+    nueva_lista = videosPorcategoriaPais(catalog,category_id,country)
+    organizada = mergesort.sort(nueva_lista, comparacionLikes)
+    lista_final = lt.newList("ARRAY_LIST")
+    for j in range(lt.size(organizada), lt.size(organizada)-n , -1):
+        if j <= lt.size(organizada) and j> 0:
+            lt.addLast(lista_final,lt.getElement(organizada,j))
+        else:
+            pass
+    return lista_final
+
+
+# requerimiento 2
+
+
+
+def diasTrending(elemento):
+    trending_date = elemento["trending_date"]
+    publicacion = elemento["publish_time"]
+    año_trending = int(trending_date[0:2])
+    dia_trending = int(trending_date[3:5])
+    mes_trending = int(trending_date[6:8])
+    año_publicacion = int(publicacion[2:4])
+    mes_publicacion = int(publicacion[5:7])
+    dia_publicacion = int(publicacion[8:10])
+    total_dias  = dia_trending-dia_publicacion
+    total_dias += (mes_trending-mes_publicacion)*30
+    total_dias += (año_trending-año_publicacion)*12*30
+    return total_dias
+
+def obtenerRatio(elemento):
+    likes = int(elemento["likes"])
+    dislikes = int(elemento["dislikes"])
+    if dislikes > 0:
+        ratio = likes/dislikes
+    else:
+        ratio = likes
+    return ratio
+
+def comparacionDiasRatioPais(elemento1, elemento2):
+    dias1 = diasTrending(elemento1)
+    dias2 = diasTrending(elemento2)
+    ratio1 = obtenerRatio(elemento1)
+    ratio2 = obtenerRatio(elemento2)
+    if ratio1 > 10 and ratio2 <= 10:
+        return True
+    elif ratio1 <= 10 and ratio2 > 10:
+        return False
+    else:
+        if dias1 > dias2:
+            return True
+        else:
+            return False
+
+def requerimiento2(catalog, country):
+    nueva_lista = mergesort.sort(catalog["videos"], comparacionDiasRatioPais)
+    longitud = lt.size(nueva_lista)
+    for i in range(1,longitud+1):
+        elemento = lt.getElement(nueva_lista, i)
+        if elemento["country"].lower() == country.lower():
+            ratio = str(obtenerRatio(elemento))
+            dias = str(diasTrending(elemento))
+            datos = lt.newList("ARRAY_LIST")
+            lt.addLast(datos, elemento["title"])
+            lt.addLast(datos, elemento["channel_title"])
+            lt.addLast(datos, elemento["country"])
+            lt.addLast(datos, ratio)
+            lt.addLast(datos, dias)
+            return datos
+
 
 # Funciones de consulta
 
