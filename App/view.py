@@ -134,21 +134,27 @@ while True:
             n = int(input("Ingrese la cantidad de elemento que quiere ver: "))
             tamaños = [1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000]
             algoritmos = {"0": "selection sort", "1":"insertion sort" ,"2": "shell sort"}
-            tiempos = []
-            for a in range(len(algoritmos.keys())): 
-                tiempos.append([])
-                for i in tamaños:
-                    tiempo = requerimiento1(catalog,category_name, country, n, str(a), True,i)
-                    tiempos[a].append(tiempo)
-            archivo = open("datos_prueba"+str(tipo_lista)+".txt", "w")
-            archivo.write("algoritmo, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000")
-            for i in range(3):
-                texto = algoritmos[str(i)] + " ,"
-                for j in range(len(tiempos[i])):
-                    texto = texto + str(tiempos[i][j]) + ", "
-                archivo.write(texto)
-            archivo.close()
-            print(tiempos)
+            for tip_lista in range(2):
+                tiempos = []
+                for a in range(len(algoritmos.keys())): 
+                    tiempos.append([])
+                    for i in tamaños:
+                        catalog = initCatalog(str(tip_lista))
+                        loadData(catalog)
+                        tiempo = requerimiento1(catalog,category_name, country, n, str(a), True,i)
+                        tiempos[a].append(tiempo)
+                        if tiempo >  300000000000:
+                            break
+
+                archivo = open("datos_prueba_intento2_"+str(tip_lista)+".txt", "w")
+                archivo.write("algoritmo, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000 \n")
+                for i in range(3):
+                    texto = algoritmos[str(i)] + " ,"
+                    for j in range(len(tiempos[i])):
+                        texto = texto + str(tiempos[i][j]) + ", "
+                    archivo.write(texto+ "\n")
+                archivo.close()
+                print(tiempos)
 
         else:
             print("No seleccionó una opción valida, por favor vuelva a intentar.")
