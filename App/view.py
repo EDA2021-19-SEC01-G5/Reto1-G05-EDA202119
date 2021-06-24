@@ -43,7 +43,7 @@ def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
     print("2- Conocer los videos con mas likes que son tendencia en un pais en la categoria deseada.")
-    print("3- Obtener el video que mas likes ha tenido en un pais especifico, cuyo ratio_likes_dislikes es altamente positivo")
+    print("3- Obtener el video que mas dias ha sido trending en un pais especifico, cuyo ratio_likes_dislikes es altamente positivo")
 
 
 
@@ -72,7 +72,6 @@ def printPrimervideo(catalog):
     print("Pais : ", elemento["country"])
     print("Likes : ", elemento["likes"])
     print("Dislikes : ",elemento["dislikes"], "\n")
-    print(elemento.keys())
 
 # requerimiento 1, con division de libros por pais y categoria, para organizar una menor cantidad
 # parametro puebaTrue si se quiere hacer la organizacion con todo, false de lo contrario

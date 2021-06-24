@@ -123,21 +123,47 @@ def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba
 
 # requerimiento 2
 
+def comparaciónTitulo(elemento1, elemento2):
+    nombre1 = elemento1["title"]
+    nombre2 = elemento2["title"]
+    if nombre1 < nombre2:
+        return True
+    else:
+        return False
+
+def dividirPais(catalog, pais):
+    lista = lt.newList("ARRAY_LIST")
+    longitud = lt.size(catalog["videos"])
+    for i in range(1,longitud+1):
+        video = lt.getElement(catalog["videos"],i)
+        if video["country"] == pais:
+            lt.addLast(lista, video)
+    return lista
 
 
-def diasTrending(elemento):
-    trending_date = elemento["trending_date"]
-    publicacion = elemento["publish_time"]
-    año_trending = int(trending_date[0:2])
-    dia_trending = int(trending_date[3:5])
-    mes_trending = int(trending_date[6:8])
-    año_publicacion = int(publicacion[2:4])
-    mes_publicacion = int(publicacion[5:7])
-    dia_publicacion = int(publicacion[8:10])
-    total_dias  = dia_trending-dia_publicacion
-    total_dias += (mes_trending-mes_publicacion)*30
-    total_dias += (año_trending-año_publicacion)*12*30
-    return total_dias
+def agregarTrending(lista_videos):
+    videos = mergesort.sort(lista_videos, comparaciónTitulo)
+    nueva_lista = lt.newList("ARRAY_LIST")
+    cant_videos = lt.size(videos)
+    iguales = 1
+    inicial = 2
+    actual = lt.getElement(videos,1)
+    while inicial<= cant_videos:
+        nuevo = lt.getElement(videos,inicial)
+        if nuevo["title"] == actual["title"]:
+            iguales += 1
+            inicial += 1
+        else:
+            elemento = nuevo
+            elemento["dias_trending"] = iguales
+            lt.addLast(nueva_lista,elemento)
+            iguales = 1
+            inicial += 1
+            actual = nuevo
+    elemento = nuevo
+    elemento["dias_trending"] = iguales
+    lt.addLast(nueva_lista,elemento)
+    return nueva_lista
 
 def obtenerRatio(elemento):
     likes = int(elemento["likes"])
@@ -149,8 +175,8 @@ def obtenerRatio(elemento):
     return ratio
 
 def comparacionDiasRatioPais(elemento1, elemento2):
-    dias1 = diasTrending(elemento1)
-    dias2 = diasTrending(elemento2)
+    dias1 = elemento1["dias_trending"]
+    dias2 = elemento2["dias_trending"]
     ratio1 = obtenerRatio(elemento1)
     ratio2 = obtenerRatio(elemento2)
     if ratio1 > 10 and ratio2 <= 10:
@@ -164,20 +190,25 @@ def comparacionDiasRatioPais(elemento1, elemento2):
             return False
 
 def requerimiento2(catalog, country):
-    nueva_lista = mergesort.sort(catalog["videos"], comparacionDiasRatioPais)
+    lista_pais = dividirPais(catalog, country)
+    lista_por_titulo = agregarTrending(lista_pais)
+    nueva_lista = mergesort.sort(lista_por_titulo, comparacionDiasRatioPais)
+    """
     longitud = lt.size(nueva_lista)
+    print(longitud)
     for i in range(1,longitud+1):
-        elemento = lt.getElement(nueva_lista, i)
-        if elemento["country"].lower() == country.lower():
-            ratio = str(obtenerRatio(elemento))
-            dias = str(diasTrending(elemento))
-            datos = lt.newList("ARRAY_LIST")
-            lt.addLast(datos, elemento["title"])
-            lt.addLast(datos, elemento["channel_title"])
-            lt.addLast(datos, elemento["country"])
-            lt.addLast(datos, ratio)
-            lt.addLast(datos, dias)
-            return datos
+        """
+    elemento = lt.getElement(nueva_lista, 1)
+    #if elemento["country"].lower() == country.lower():
+    ratio = str(obtenerRatio(elemento))
+    dias = elemento["dias_trending"]
+    datos = lt.newList("ARRAY_LIST")
+    lt.addLast(datos, elemento["title"])
+    lt.addLast(datos, elemento["channel_title"])
+    lt.addLast(datos, elemento["country"])
+    lt.addLast(datos, ratio)
+    lt.addLast(datos, dias)
+    return datos
 
 
 # Funciones de consulta
