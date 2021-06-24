@@ -28,7 +28,10 @@ import controller
 from DISClib.ADT import list as lt
 assert cf
 from tabulate import tabulate
+import sys
 
+default_limit = 1000
+sys.setrecursionlimit(default_limit*20)
 """
 La vista se encarga de la interacción con el usuario
 Presenta el menu de opciones y por cada seleccion
@@ -126,35 +129,62 @@ while True:
             category_name = input("Ingrese la categoria de la cual desea obtener información: ")
             country = input("Ingrese el pais del cual desea obtener información: ")
             n = int(input("Ingrese la cantidad de elemento que quiere ver: "))
-            tipo_organizacion = input("Ingrese el tipo de algoritmo de ordenamiento que desee. \n0 para selection sort, 1 para insertion sort, y 2 para shell sort")
+            tipo_organizacion = input("Ingrese el tipo de algoritmo de ordenamiento que desee. \n0 para selection sort, 1 para insertion sort, \n2 para shell sort \n 3 para quicksort \n4 para mergesort")
             requerimiento1(catalog,category_name, country, n, tipo_organizacion)
         elif prueba == "si":
             category_name = input("Ingrese la categoria de la cual desea obtener información: ")
             country = input("Ingrese el pais del cual desea obtener información: ")
             n = int(input("Ingrese la cantidad de elemento que quiere ver: "))
-            tamaños = [1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000]
-            algoritmos = {"0": "selection sort", "1":"insertion sort" ,"2": "shell sort"}
-            for tip_lista in range(2):
-                tiempos = []
-                for a in range(len(algoritmos.keys())): 
-                    tiempos.append([])
-                    for i in tamaños:
-                        catalog = initCatalog(str(tip_lista))
-                        loadData(catalog)
-                        tiempo = requerimiento1(catalog,category_name, country, n, str(a), True,i)
-                        tiempos[a].append(tiempo)
-                        if tiempo >  300000000000:
-                            break
+            iterativo_recursivo = input("Ingrese 0 si desea hacer pruebas con algoritmos iterativos, 1 si desea hacerlas con algoritmos recursivos: ")
+            if iterativo_recursivo == "0":
+                tamaños = [1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000]
+                algoritmos = {"0": "selection sort", "1":"insertion sort" ,"2": "shell sort"}
+                for tip_lista in range(2):
+                    tiempos = []
+                    for a in range(len(algoritmos.keys())): 
+                        tiempos.append([])
+                        for i in tamaños:
+                            catalog = initCatalog(str(tip_lista))
+                            loadData(catalog)
+                            tiempo = requerimiento1(catalog,category_name, country, n, str(a), True,i)
+                            tiempos[a].append(tiempo)
+                            if tiempo >  300000000000:
+                                break
 
-                archivo = open("datos_prueba_intento2_"+str(tip_lista)+".txt", "w")
-                archivo.write("algoritmo, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000 \n")
-                for i in range(3):
-                    texto = algoritmos[str(i)] + " ,"
-                    for j in range(len(tiempos[i])):
-                        texto = texto + str(tiempos[i][j]) + ", "
-                    archivo.write(texto+ "\n")
-                archivo.close()
-                print(tiempos)
+                    archivo = open("datos_prueba_intento3_"+str(tip_lista)+".txt", "w")
+                    archivo.write("algoritmo, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000 \n")
+                    for i in range(3):
+                        texto = algoritmos[str(i)] + " ,"
+                        for j in range(len(tiempos[i])):
+                            texto = texto + str(tiempos[i][j]) + ", "
+                        archivo.write(texto+ "\n")
+                    archivo.close()
+                    print(tiempos)
+            elif iterativo_recursivo == "1":
+                tamaños = [1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000]
+                algoritmos = {"3": "quicksort", "4":"mergesort" }
+                for tip_lista in range(2):
+                    tiempos = []
+                    algoritmos_recursivos = algoritmos.keys()
+                    for a in range(len(algoritmos.keys())): 
+                        tiempos.append([])
+                        for i in tamaños:
+                            catalog = initCatalog(str(tip_lista))
+                            loadData(catalog)
+                            tiempo = requerimiento1(catalog,category_name, country, n, str(a+3), True,i)
+                            tiempos[a].append(tiempo)
+                            if tiempo >  300000000000:
+                                break
+                    archivo = open("datos_prueba_lab5_intento1_"+str(tip_lista)+".txt", "w")
+                    archivo.write("algoritmo, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000 \n")
+                    for i in range(len(algoritmos.keys())):
+                        texto = algoritmos[str(i)] + " ,"
+                        for j in range(len(tiempos[i])):
+                            texto = texto + str(tiempos[i][j]) + ", "
+                        archivo.write(texto+ "\n")
+                    archivo.close()
+                    print(tiempos)
+
 
         else:
             print("No seleccionó una opción valida, por favor vuelva a intentar.")

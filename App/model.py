@@ -31,7 +31,7 @@ from DISClib.ADT import list as lt
 from DISClib.Algorithms.Sorting import shellsort
 from DISClib.Algorithms.Sorting import insertionsort 
 from DISClib.Algorithms.Sorting import selectionsort
-from DISClib.Algorithms.Sorting import mergesort 
+from DISClib.Algorithms.Sorting import mergesort, quicksort
 assert cf
 import time
 
@@ -92,7 +92,7 @@ def comparacionLikes(elemento1, elemento2):
         return False
 
 def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba, size):
-    opciones = {"0": selectionsort.sort, "1": insertionsort.sort, "2": shellsort.sort}
+    opciones = {"0": selectionsort.sort, "1": insertionsort.sort, "2": shellsort.sort, "3": quicksort.sort, "4": mergesort.sort}
     categorias = catalog["categorias"]
     cantidad_categorias = lt.size(categorias)
     for i in range(1,cantidad_categorias+1):
