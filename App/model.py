@@ -81,8 +81,9 @@ def videosPorcategoriaPais(catalog, categoryId, pais):
     nueva_lista = lt.newList("ARRAY_LIST")
     for i in range(1,cantidad_videos+1):
         elemento = lt.getElement(catalog,i)
-        if elemento["category_id"]==categoryId and elemento["country"]==pais:
-            lt.addLast(nueva_lista, elemento)
+        if elemento["category_id"]==categoryId:
+            if elemento["country"]==pais:
+                lt.addLast(nueva_lista, elemento)
     return nueva_lista
 
 def comparacionLikes(elemento1, elemento2):
