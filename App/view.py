@@ -150,7 +150,7 @@ while True:
                             if tiempo >  300000000000:
                                 break
 
-                    archivo = open("datos_prueba_intento3_"+str(tip_lista)+".txt", "w")
+                    archivo = open("datos_prueba_intento4_"+str(tip_lista)+".txt", "w")
                     archivo.write("algoritmo, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000 \n")
                     for i in range(3):
                         texto = algoritmos[str(i)] + " ,"

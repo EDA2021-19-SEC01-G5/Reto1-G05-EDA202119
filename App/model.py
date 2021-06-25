@@ -97,7 +97,7 @@ def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba
     cantidad_categorias = lt.size(categorias)
     for i in range(1,cantidad_categorias+1):
         dato = lt.getElement(categorias,i)
-        if dato["name"].lower() == category_name.lower():
+        if category_name.lower() in dato["name"].lower():
             category_id = dato["id"]
     if prueba == False:
         nueva_lista = videosPorcategoriaPais(catalog["videos"],category_id,country)
