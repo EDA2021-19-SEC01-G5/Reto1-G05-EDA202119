@@ -87,7 +87,7 @@ def videosPorcategoriaPais(catalog, categoryId, pais):
     return nueva_lista
 
 def comparacionLikes(elemento1, elemento2):
-    if int(elemento1["likes"]) < int(elemento2["likes"]):
+    if int(elemento1["likes"]) > int(elemento2["likes"]):
         return True
     else:
         return False
@@ -114,7 +114,7 @@ def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba
 
     t_total = t_end - t_start
     lista_final = lt.newList("ARRAY_LIST")
-    for j in range(lt.size(organizada), lt.size(organizada)-n , -1):
+    for j in range(1, n+1 ):
         if j <= lt.size(organizada) and j> 0:
             lt.addLast(lista_final,lt.getElement(organizada,j))
         else:

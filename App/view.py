@@ -29,9 +29,10 @@ from DISClib.ADT import list as lt
 assert cf
 from tabulate import tabulate
 import sys
+import gc
 
 default_limit = 1000
-sys.setrecursionlimit(default_limit*20)
+sys.setrecursionlimit(default_limit*400000)
 """
 La vista se encarga de la interacción con el usuario
 Presenta el menu de opciones y por cada seleccion
@@ -160,9 +161,10 @@ while True:
                     archivo.close()
                     print(tiempos)
             elif iterativo_recursivo == "1":
-                tamaños = [1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000]
+                tamaños = [1000, 2000, 4000, 8000, 16000, 32000]
+                #tamaños =  [64000, 128000, 256000]
                 algoritmos = {"3": "quicksort", "4":"mergesort" }
-                for tip_lista in range(2):
+                for tip_lista in range(1,2):
                     tiempos = []
                     algoritmos_recursivos = algoritmos.keys()
                     for a in range(len(algoritmos.keys())): 
@@ -174,10 +176,13 @@ while True:
                             tiempos[a].append(tiempo)
                             if tiempo >  300000000000:
                                 break
-                    archivo = open("datos_prueba_lab5_intento1_"+str(tip_lista)+".txt", "w")
+                            del catalog
+                            gc.collect()
+                            print("ejecucion "+str(i))
+                    archivo = open("datos_prueba_lab5_intento2_"+str(tip_lista)+".txt", "w")
                     archivo.write("algoritmo, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000 \n")
                     for i in range(len(algoritmos.keys())):
-                        texto = algoritmos[str(i)] + " ,"
+                        texto = algoritmos[str(i+3)] + " ,"
                         for j in range(len(tiempos[i])):
                             texto = texto + str(tiempos[i][j]) + ", "
                         archivo.write(texto+ "\n")
