@@ -164,7 +164,7 @@ while True:
                 tamaños = [1000, 2000, 4000, 8000, 16000, 32000]
                 #tamaños =  [64000, 128000, 256000]
                 algoritmos = {"3": "quicksort", "4":"mergesort" }
-                for tip_lista in range(1,2):
+                for tip_lista in range(2):
                     tiempos = []
                     algoritmos_recursivos = algoritmos.keys()
                     for a in range(len(algoritmos.keys())): 
