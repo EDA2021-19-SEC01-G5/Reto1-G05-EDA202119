@@ -44,7 +44,8 @@ def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
     print("2- Conocer los videos con mas likes que son tendencia en un pais en la categoria deseada.")
-    print("3- Obtener el video que mas dias ha sido trending en un pais especifico, cuyo ratio_likes_dislikes es altamente positivo")
+    print("3- Obtener el video que mas dias ha sido trending en un pais especifico, cuyo ratio_likes_dislikes es altamente positivo.")
+    print("5- Conocer los n videos diferentes con mas comentarios en un pais con un tag especifico.")
 
 
 
@@ -73,6 +74,7 @@ def printPrimervideo(catalog):
     print("Pais : ", elemento["country"])
     print("Likes : ", elemento["likes"])
     print("Dislikes : ",elemento["dislikes"], "\n")
+    print(elemento.keys())
 
 # requerimiento 1, con division de libros por pais y categoria, para organizar una menor cantidad
 # parametro puebaTrue si se quiere hacer la organizacion con todo, false de lo contrario
@@ -104,6 +106,28 @@ def requerimiento2(catalog, country):
         for i in range(1, longitud+1):
             print( header[i-1],lt.getElement(datos,i))
     print("\n")
+
+
+
+
+
+def requerimiento4(catalog, country, tag, n):
+    print("Encontrando los archivos ... \n")
+    lista = controller.requerimiento4(catalog, country, tag, n)
+    longitud_lista = lt.size(lista)
+    if n != longitud_lista:
+        print("No fue posible encontrar la cantidad de datos pedidos. \nSe entregan la cantidad maxima posible. \n")
+    header = ["title","channel_title", "publish_time", "views", "likes", "dislikes", "comment_count", "tags"]
+    datos = []
+    for i in range(1, longitud_lista+1):
+        datos.append([])
+        video = lt.getElement(lista, i)
+        for j in range(len(header)):
+            datos[i-1].append(video[header[j]])
+    print(tabulate(datos, headers=header))
+
+
+
 """
 Menu principal
 """
@@ -188,8 +212,6 @@ while True:
                         archivo.write(texto+ "\n")
                     archivo.close()
                     print(tiempos)
-
-
         else:
             print("No seleccionó una opción valida, por favor vuelva a intentar.")
 
@@ -197,6 +219,13 @@ while True:
     elif int(inputs[0]) == 3:
         country = input("Ingrese el pais del cual quiere obtener la información: ")
         requerimiento2(catalog, country)
+
+
+    elif int(inputs[0]) == 5:
+        country = input("Ingrese el pais del cual quiere obtener la información: ")
+        tag = input("Ingrese el tag del cual quiere obtener la información: ")
+        n = int(input("Ingrese la cantidad de elemento que desea obtener: "))
+        requerimiento4(catalog, country, tag, n)
     else:
         sys.exit(0)
 sys.exit(0)

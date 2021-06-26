@@ -67,3 +67,9 @@ def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba
 def requerimiento2(catalog, country):
     datos = model.requerimiento2(catalog,country)
     return datos
+
+
+
+def requerimiento4(catalog, country, tag, n):
+    lista = model.requerimiento4(catalog, country, tag, n)
+    return lista
