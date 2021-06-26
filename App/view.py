@@ -22,14 +22,13 @@
  """
 
 #from App.controller import initcatalog
+import gc
+from tabulate import tabulate
 import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
 assert cf
-from tabulate import tabulate
-import sys
-import gc
 
 default_limit = 1000
 sys.setrecursionlimit(default_limit*400000)
@@ -40,12 +39,12 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
+
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
     print("2- Conocer los videos con mas likes que son tendencia en un pais en la categoria deseada.")
     print("3- Obtener el video que mas dias ha sido trending en un pais especifico, cuyo ratio_likes_dislikes es altamente positivo")
-
 
 
 def initCatalog(tipo_lista):
@@ -59,9 +58,8 @@ def loadData(catalog):
 def printCategorias(catalog):
     print("Información sobre las categorias: \n")
     cantidad_categorias = lt.size(catalog["categorias"])
-    for i in range(1,cantidad_categorias+1):
-        print(lt.getElement(catalog["categorias"],i))
-    
+    for i in range(1, cantidad_categorias+1):
+        print(lt.getElement(catalog["categorias"], i))
 
 
 def printPrimervideo(catalog):
@@ -72,38 +70,44 @@ def printPrimervideo(catalog):
     print("Fecha de trending : ", elemento["trending_date"])
     print("Pais : ", elemento["country"])
     print("Likes : ", elemento["likes"])
-    print("Dislikes : ",elemento["dislikes"], "\n")
+    print("Dislikes : ", elemento["dislikes"], "\n")
 
 # requerimiento 1, con division de libros por pais y categoria, para organizar una menor cantidad
 # parametro puebaTrue si se quiere hacer la organizacion con todo, false de lo contrario
-def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba= False, size = 10):
-    lista, t_total = controller.requerimiento1(catalog,category_name, country,n, tipo_organizacion, prueba, size)
+
+
+def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba=False, size=10):
+    lista, t_total = controller.requerimiento1(
+        catalog, category_name, country, n, tipo_organizacion, prueba, size)
     longitud = lt.size(lista)
     if longitud < n:
         print("La cantidad de videos pedidos excede la cantidad posible. \n A continuación de muestran dos los libros de la categoria deseada y el pais deseado, organizados según la cantidad de likes")
-    header = ["", "trending date", "titulo", "nombre del canal", "fecha publicacion", "vistas", "likes", "dislikes"]
+    header = ["", "trending date", "titulo", "nombre del canal",
+              "fecha publicacion", "vistas", "likes", "dislikes"]
     mostrar = []
     for i in range(1, longitud+1):
-        elemento = lt.getElement(lista,i)
-        mostrar.append([i, elemento["trending_date"], elemento["title"], elemento["channel_title"], elemento["publish_time"],elemento["views"],elemento["likes"],elemento["dislikes"]])
+        elemento = lt.getElement(lista, i)
+        mostrar.append([i, elemento["trending_date"], elemento["title"], elemento["channel_title"],
+                       elemento["publish_time"], elemento["views"], elemento["likes"], elemento["dislikes"]])
     print(tabulate(mostrar, headers=header))
     print("\nEl tiempo que le tomo al algoritmo de organización fue de :", t_total, "ns")
-    if prueba: 
+    if prueba:
         return t_total
 
 
-
-
 def requerimiento2(catalog, country):
-    datos = controller.requerimiento2(catalog,country)
-    header = ["\nTitulo: ", "Nombre del canal: ", "Pais: ", "ratio_likes_dislikes: ", "Dias: "]
+    datos = controller.requerimiento2(catalog, country)
+    header = ["\nTitulo: ", "Nombre del canal: ",
+              "Pais: ", "ratio_likes_dislikes: ", "Dias: "]
     longitud = lt.size(datos)
     if longitud != 5:
         print("No se entro un nombre de pais valido o dentro de los datos")
     else:
         for i in range(1, longitud+1):
-            print( header[i-1],lt.getElement(datos,i))
+            print(header[i-1], lt.getElement(datos, i))
     print("\n")
+
+
 """
 Menu principal
 """
@@ -111,91 +115,108 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
-        tipo_lista = input("Ingrese el tipo de lista con el que desea cargar la infromación. \n0 para ARRAY_LIST o 1 para SINGLE_LINKED: ")
+        tipo_lista = input(
+            "Ingrese el tipo de lista con el que desea cargar la infromación. \n0 para ARRAY_LIST o 1 para SINGLE_LINKED: ")
         print("Cargando información de los archivos ....")
         catalog = initCatalog(tipo_lista)
         if catalog:
             loadData(catalog)
             print("información cargada \n")
-            print("Total de registros de videos cargados : ", lt.size(catalog["videos"]),"\n")
+            print("Total de registros de videos cargados : ",
+                  lt.size(catalog["videos"]), "\n")
             printCategorias(catalog)
             printPrimervideo(catalog)
         else:
-            print("\nNo ingreso una opcion de tipo de dato valida, por favor intente de nuevo.\n")
+            print(
+                "\nNo ingreso una opcion de tipo de dato valida, por favor intente de nuevo.\n")
 
     elif int(inputs[0]) == 2:
-        prueba = input("Desea realizar pruebas de funcionamiento? (si/no): ")
+        prueba = input("¿Desea realizar pruebas de rendimiento? (si/no): ")
         if prueba == "no":
-            category_name = input("Ingrese la categoria de la cual desea obtener información: ")
-            country = input("Ingrese el pais del cual desea obtener información: ")
-            n = int(input("Ingrese la cantidad de elemento que quiere ver: "))
-            tipo_organizacion = input("Ingrese el tipo de algoritmo de ordenamiento que desee. \n0 para selection sort, 1 para insertion sort, \n2 para shell sort \n 3 para quicksort \n4 para mergesort")
-            requerimiento1(catalog,category_name, country, n, tipo_organizacion)
+            category_name = input(
+                "Ingrese la categoria de la cual desea obtener información: ")
+            country = input(
+                "Ingrese el pais del cual desea obtener información: ")
+            n = int(input("Ingrese la cantidad de elementos que quiere ver: "))
+            tipo_organizacion = input(
+                "Ingrese el tipo de algoritmo de ordenamiento que desee. \n0 para selection sort, 1 para insertion sort, \n2 para shell sort \n3 para quicksort \n4 para mergesort: ")
+            requerimiento1(catalog, category_name,
+                           country, n, tipo_organizacion)
         elif prueba == "si":
-            category_name = input("Ingrese la categoria de la cual desea obtener información: ")
-            country = input("Ingrese el pais del cual desea obtener información: ")
+            category_name = input(
+                "Ingrese la categoria de la cual desea obtener información: ")
+            country = input(
+                "Ingrese el pais del cual desea obtener información: ")
             n = int(input("Ingrese la cantidad de elemento que quiere ver: "))
-            iterativo_recursivo = input("Ingrese 0 si desea hacer pruebas con algoritmos iterativos, 1 si desea hacerlas con algoritmos recursivos: ")
+            iterativo_recursivo = input(
+                "Ingrese 0 si desea hacer pruebas con algoritmos iterativos, 1 si desea hacerlas con algoritmos recursivos: ")
             if iterativo_recursivo == "0":
-                tamaños = [1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000]
-                algoritmos = {"0": "selection sort", "1":"insertion sort" ,"2": "shell sort"}
+                tamaños = [1000, 2000, 4000, 8000,
+                           16000, 32000, 64000, 128000, 256000]
+                algoritmos = {"0": "selection sort",
+                              "1": "insertion sort", "2": "shell sort"}
                 for tip_lista in range(2):
                     tiempos = []
-                    for a in range(len(algoritmos.keys())): 
+                    for a in range(len(algoritmos.keys())):
                         tiempos.append([])
                         for i in tamaños:
                             catalog = initCatalog(str(tip_lista))
                             loadData(catalog)
-                            tiempo = requerimiento1(catalog,category_name, country, n, str(a), True,i)
+                            tiempo = requerimiento1(
+                                catalog, category_name, country, n, str(a), True, i)
                             tiempos[a].append(tiempo)
-                            if tiempo >  300000000000:
+                            if tiempo > 300000000000:
                                 break
 
-                    archivo = open("datos_prueba_intento4_"+str(tip_lista)+".txt", "w")
-                    archivo.write("algoritmo, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000 \n")
+                    archivo = open("datos_prueba_intento4_" +
+                                   str(tip_lista)+".txt", "w")
+                    archivo.write(
+                        "algoritmo, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000 \n")
                     for i in range(3):
                         texto = algoritmos[str(i)] + " ,"
                         for j in range(len(tiempos[i])):
                             texto = texto + str(tiempos[i][j]) + ", "
-                        archivo.write(texto+ "\n")
+                        archivo.write(texto + "\n")
                     archivo.close()
                     print(tiempos)
             elif iterativo_recursivo == "1":
                 tamaños = [1000, 2000, 4000, 8000, 16000, 32000]
                 #tamaños =  [64000, 128000, 256000]
-                algoritmos = {"3": "quicksort", "4":"mergesort" }
+                algoritmos = {"3": "quicksort", "4": "mergesort"}
                 for tip_lista in range(2):
                     tiempos = []
                     algoritmos_recursivos = algoritmos.keys()
-                    for a in range(len(algoritmos.keys())): 
+                    for a in range(len(algoritmos.keys())):
                         tiempos.append([])
                         for i in tamaños:
                             catalog = initCatalog(str(tip_lista))
                             loadData(catalog)
-                            tiempo = requerimiento1(catalog,category_name, country, n, str(a+3), True,i)
+                            tiempo = requerimiento1(
+                                catalog, category_name, country, n, str(a+3), True, i)
                             tiempos[a].append(tiempo)
-                            if tiempo >  300000000000:
+                            if tiempo > 300000000000:
                                 break
                             del catalog
                             gc.collect()
                             print("ejecucion "+str(i))
-                    archivo = open("datos_prueba_lab5_intento2_"+str(tip_lista)+".txt", "w")
-                    archivo.write("algoritmo, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000 \n")
+                    archivo = open("datos_prueba_lab5_intento2_" +
+                                   str(tip_lista)+".txt", "w")
+                    archivo.write(
+                        "algoritmo, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000, 256000 \n")
                     for i in range(len(algoritmos.keys())):
                         texto = algoritmos[str(i+3)] + " ,"
                         for j in range(len(tiempos[i])):
                             texto = texto + str(tiempos[i][j]) + ", "
-                        archivo.write(texto+ "\n")
+                        archivo.write(texto + "\n")
                     archivo.close()
                     print(tiempos)
-
 
         else:
             print("No seleccionó una opción valida, por favor vuelva a intentar.")
 
-        
     elif int(inputs[0]) == 3:
-        country = input("Ingrese el pais del cual quiere obtener la información: ")
+        country = input(
+            "Ingrese el pais del cual quiere obtener la información: ")
         requerimiento2(catalog, country)
     else:
         sys.exit(0)
