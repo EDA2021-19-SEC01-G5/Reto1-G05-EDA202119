@@ -212,6 +212,58 @@ def requerimiento2(catalog, country):
     return datos
 
 
+
+
+
+#requerimiento 4
+def separarPaisTags(catalog, country, tag):
+    videos = catalog["videos"]
+    longitud_videos = lt.size(videos)
+    nueva_lista = lt.newList("ARRAY_LIST")
+    for i in range(1, longitud_videos+1):
+        video = lt.getElement(videos, i)
+        if tag in video["tags"] and country == video["country"]:
+            lt.addLast(nueva_lista, video)
+    return nueva_lista
+
+
+def comparacionComentarios(elemento1, elemento2):
+    comentarios1 = int(elemento1["comment_count"])
+    comentarios2 = int(elemento2["comment_count"])
+    if comentarios1 > comentarios2:
+        return True
+    else:
+        return False
+
+def eliminarRepetidos(videos):
+    longitud = lt.size(videos)
+    video1 = lt.firstElement(videos)
+    lista = lt.newList("ARRAY_LIST")
+    for i in range(2, longitud +1):
+        video2 = lt.getElement(videos, i)
+        if video1["title"] != video2["title"]:
+            lt.addLast(lista, video1)
+            video1 = video2
+    return lista
+
+
+def requerimiento4(catalog, country, tag, n):
+    lista_modificada = separarPaisTags(catalog, country, tag)
+    organizada = mergesort.sort(lista_modificada, comparacionComentarios)
+    organizada = eliminarRepetidos(organizada)
+    entregar = lt.newList("ARRAY_LIST")
+    i = 1
+    while i<= n: 
+        if lt.size(organizada) >= i:
+            lt.addLast(entregar, lt.getElement(organizada, i))
+            i += 1
+        else:
+            i = n+1
+    return entregar
+
+
+
+
 # Funciones de consulta
 
 # Funciones utilizadas para comparar elementos dentro de una lista
