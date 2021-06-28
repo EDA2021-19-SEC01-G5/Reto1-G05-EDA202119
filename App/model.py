@@ -80,6 +80,10 @@ def addCategoria(catalog, categoria):
 # Requerimiento 1
 
 def videosPorcategoriaPais(catalog, categoryId, pais):
+    '''
+    Retorna una nueva lista filtrada acorde a la
+    categoria y país ingresados por parámetro.
+    '''
     cantidad_videos = lt.size(catalog)
     nueva_lista = lt.newList("ARRAY_LIST")
     for i in range(1, cantidad_videos+1):
@@ -91,6 +95,11 @@ def videosPorcategoriaPais(catalog, categoryId, pais):
 
 
 def comparacionLikes(elemento1, elemento2):
+    '''
+    Función de comparación de likes utilizada
+    para ordenar de manera descendente
+    la lista ingresada.
+    '''
     if int(elemento1["likes"]) > int(elemento2["likes"]):
         return True
     else:
@@ -98,14 +107,13 @@ def comparacionLikes(elemento1, elemento2):
 
 
 def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba, size):
+    '''
+    Retorna los n videos con más likes en un país y 
+    categoria determinados
+    '''
     opciones = {"0": selectionsort.sort, "1": insertionsort.sort,
                 "2": shellsort.sort, "3": quicksort.sort, "4": mergesort.sort}
-    categorias = catalog["categorias"]
-    cantidad_categorias = lt.size(categorias)
-    for i in range(1, cantidad_categorias+1):
-        dato = lt.getElement(categorias, i)
-        if category_name.lower() in dato["name"].lower():
-            category_id = dato["id"]
+    category_id = category_name_id(catalog, category_name)
     if prueba == False:
         nueva_lista = videosPorcategoriaPais(
             catalog["videos"], category_id, country)
@@ -118,7 +126,7 @@ def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba
 
     if prueba:
         organizada = videosPorcategoriaPais(organizada, category_id, country)
-
+    # Crear lista de retorno
     t_total = t_end - t_start
     lista_final = lt.newList("ARRAY_LIST")
     for j in range(1, n+1):
@@ -132,6 +140,10 @@ def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba
 # requerimiento 2
 
 def comparaciónTitulo(elemento1, elemento2):
+    '''
+    Función de comparación de título utilizada
+    para ordenar por titulo la lista de videos ingresada.
+    '''
     nombre1 = elemento1["title"]
     nombre2 = elemento2["title"]
     if nombre1 < nombre2:
@@ -141,6 +153,10 @@ def comparaciónTitulo(elemento1, elemento2):
 
 
 def dividirPais(catalog, pais):
+    '''
+    Retorna una nueva lista filtrando
+    acorde al país ingresado por parámetro
+    '''
     lista = lt.newList("ARRAY_LIST")
     longitud = lt.size(catalog["videos"])
     for i in range(1, longitud+1):
@@ -151,6 +167,10 @@ def dividirPais(catalog, pais):
 
 
 def agregarTrending(lista_videos):
+    '''
+    Retorna una lista de videos agregando
+    el número de días que fue trending.
+    '''
     videos = mergesort.sort(lista_videos, comparaciónTitulo)
     nueva_lista = lt.newList("ARRAY_LIST")
     cant_videos = lt.size(videos)
@@ -176,6 +196,10 @@ def agregarTrending(lista_videos):
 
 
 def obtenerRatio(elemento):
+    '''
+    Retorna el ratio likes/dislikes del
+    video ingresado por parámetro
+    '''
     likes = int(elemento["likes"])
     dislikes = int(elemento["dislikes"])
     if dislikes > 0:
@@ -186,6 +210,11 @@ def obtenerRatio(elemento):
 
 
 def comparacionDiasRatioPais(elemento1, elemento2):
+    '''
+    Función de comparación para organizar los videos
+    según los dias trending y el ratio likes/dislikes
+    que poseen.
+    '''
     dias1 = elemento1["dias_trending"]
     dias2 = elemento2["dias_trending"]
     ratio1 = obtenerRatio(elemento1)
@@ -202,16 +231,15 @@ def comparacionDiasRatioPais(elemento1, elemento2):
 
 
 def requerimiento2(catalog, country):
+    '''
+    Retorna una lista que contiene los datos del video
+    con más dias trending, cuya relación likes/dislikes es positiva
+    y acorde a un país determinado.
+    '''
     lista_pais = dividirPais(catalog, country)
     lista_por_titulo = agregarTrending(lista_pais)
     nueva_lista = mergesort.sort(lista_por_titulo, comparacionDiasRatioPais)
-    """
-    longitud = lt.size(nueva_lista)
-    print(longitud)
-    for i in range(1,longitud+1):
-        """
     elemento = lt.getElement(nueva_lista, 1)
-    # if elemento["country"].lower() == country.lower():
     ratio = str(obtenerRatio(elemento))
     dias = elemento["dias_trending"]
     datos = lt.newList("ARRAY_LIST")
@@ -226,6 +254,11 @@ def requerimiento2(catalog, country):
 # Requerimiento 3:
 
 def requerimiento3(catalog, category_name):
+    '''
+    Retorna una tupla con la información del video
+    con más dias trending, cuya relación likes/dislikes es positiva
+    y acorde a una categoria determinada.
+    '''
     id = category_name_id(catalog, category_name)
     filtered_list = filter_by_category_ratio(catalog, id)
     trending_list = agregarTrending(filtered_list)
@@ -258,6 +291,11 @@ def category_name_id(catalog, category_name):
 
 
 def filter_by_category_ratio(catalog, category_id):
+    '''
+    Retorna una nueva lista con los videos que
+    pertenecen a la categoria cuyo id es ingresado por parámetro
+    y cuyo ratio likes/dislikes es altamente positivo.
+    '''
     new_list = lt.newList('ARRAY_LIST')
     catalog = catalog['videos']
     length = lt.size(catalog)
@@ -273,6 +311,11 @@ def filter_by_category_ratio(catalog, category_id):
 
 
 def cmp_by_trending(element1, element2):
+    '''
+    Función de comparación para ordenar
+    la lista acorde al número de días que el video
+    ha sido trending
+    '''
     compare = None
     trending1 = element1['dias_trending']
     trending2 = element2['dias_trending']
@@ -288,6 +331,11 @@ def cmp_by_trending(element1, element2):
 
 # requerimiento 4
 def separarPaisTags(catalog, country, tag):
+    '''
+    Retorna una nueva lista que incluye
+    únicamente los videos que cumplan con el filtro de 
+    país y tag especificados por parámetro
+    '''
     videos = catalog["videos"]
     longitud_videos = lt.size(videos)
     nueva_lista = lt.newList("ARRAY_LIST")
@@ -299,6 +347,11 @@ def separarPaisTags(catalog, country, tag):
 
 
 def comparacionComentarios(elemento1, elemento2):
+    '''
+    Función de comparación para ordenar
+    de mayor a menor los videos acorde al número
+    de comentarios
+    '''
     comentarios1 = int(elemento1["comment_count"])
     comentarios2 = int(elemento2["comment_count"])
     if comentarios1 > comentarios2:
@@ -308,6 +361,10 @@ def comparacionComentarios(elemento1, elemento2):
 
 
 def eliminarRepetidos(videos):
+    '''
+    Retorna una nueva lista sin videos
+    repetidos
+    '''
     longitud = lt.size(videos)
     video1 = lt.firstElement(videos)
     lista = lt.newList("ARRAY_LIST")
@@ -320,6 +377,10 @@ def eliminarRepetidos(videos):
 
 
 def requerimiento4(catalog, country, tag, n):
+    '''
+    Retorna una lista con los n videos con más comentarios según el país
+    y el tag especificados por parámetro.
+    '''
     lista_modificada = separarPaisTags(catalog, country, tag)
     organizada = mergesort.sort(lista_modificada, comparacionComentarios)
     organizada = eliminarRepetidos(organizada)
@@ -332,10 +393,3 @@ def requerimiento4(catalog, country, tag, n):
         else:
             i = n+1
     return entregar
-
-
-# Funciones de consulta
-
-# Funciones utilizadas para comparar elementos dentro de una lista
-
-# Funciones de ordenamiento
