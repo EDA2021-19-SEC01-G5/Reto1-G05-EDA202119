@@ -164,15 +164,19 @@ while True:
                 "\nNo ingreso una opcion de tipo de dato valida, por favor intente de nuevo.\n")
 
     elif int(inputs[0]) == 2:
-        prueba = input("¿Desea realizar pruebas de rendimiento? (si/no): ")
+        #prueba = input("¿Desea realizar pruebas de rendimiento? (si/no): ")
+        prueba = "no"
         if prueba == "no":
             category_name = input(
                 "Ingrese la categoria de la cual desea obtener información: ")
             country = input(
                 "Ingrese el pais del cual desea obtener información: ")
             n = int(input("Ingrese la cantidad de elementos que quiere ver: "))
+            '''
             tipo_organizacion = input(
                 "Ingrese el tipo de algoritmo de ordenamiento que desee. \n0 para selection sort, 1 para insertion sort, \n2 para shell sort \n3 para quicksort \n4 para mergesort: ")
+            '''
+            tipo_organizacion = "4"
             requerimiento1(catalog, category_name,
                            country, n, tipo_organizacion)
         elif prueba == "si":
