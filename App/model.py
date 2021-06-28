@@ -25,15 +25,15 @@
  """
 
 
-from DISClib.DataStructures.arraylist import addLast, getElement
+import time
+from DISClib.DataStructures.arraylist import addLast, getElement, newList
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.Algorithms.Sorting import shellsort
-from DISClib.Algorithms.Sorting import insertionsort 
+from DISClib.Algorithms.Sorting import insertionsort
 from DISClib.Algorithms.Sorting import selectionsort
 from DISClib.Algorithms.Sorting import mergesort, quicksort
 assert cf
-import time
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
@@ -43,6 +43,8 @@ los mismos.
 # Construccion de modelos
 
 # Funciones para agregar informacion al catalogo
+
+
 def newCatalog(tipo_lista):
     """
     Crea el catalogo con la información de videos y de categorias
@@ -53,7 +55,7 @@ def newCatalog(tipo_lista):
         ED = "SINGLE_LINKED"
     else:
         return None
-    catalog = {"videos":None, "categorias":None}
+    catalog = {"videos": None, "categorias": None}
     catalog["videos"] = lt.newList(ED)
     catalog["categorias"] = lt.newList(ED)
     return catalog
@@ -63,7 +65,8 @@ def addVideo(catalog, video):
     """
     Adiciona la información de un video al catalogo
     """
-    lt.addLast(catalog["videos"],video)
+    lt.addLast(catalog["videos"], video)
+
 
 def addCategoria(catalog, categoria):
     """
@@ -74,17 +77,18 @@ def addCategoria(catalog, categoria):
 
 # Funciones para creacion de datos
 
-#Requerimiento 1
+# Requerimiento 1
 
 def videosPorcategoriaPais(catalog, categoryId, pais):
     cantidad_videos = lt.size(catalog)
     nueva_lista = lt.newList("ARRAY_LIST")
-    for i in range(1,cantidad_videos+1):
-        elemento = lt.getElement(catalog,i)
-        if elemento["category_id"]==categoryId:
-            if elemento["country"]==pais:
+    for i in range(1, cantidad_videos+1):
+        elemento = lt.getElement(catalog, i)
+        if elemento["category_id"] == categoryId:
+            if elemento["country"] == pais:
                 lt.addLast(nueva_lista, elemento)
     return nueva_lista
+
 
 def comparacionLikes(elemento1, elemento2):
     if int(elemento1["likes"]) > int(elemento2["likes"]):
@@ -92,16 +96,19 @@ def comparacionLikes(elemento1, elemento2):
     else:
         return False
 
+
 def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba, size):
-    opciones = {"0": selectionsort.sort, "1": insertionsort.sort, "2": shellsort.sort, "3": quicksort.sort, "4": mergesort.sort}
+    opciones = {"0": selectionsort.sort, "1": insertionsort.sort,
+                "2": shellsort.sort, "3": quicksort.sort, "4": mergesort.sort}
     categorias = catalog["categorias"]
     cantidad_categorias = lt.size(categorias)
-    for i in range(1,cantidad_categorias+1):
-        dato = lt.getElement(categorias,i)
+    for i in range(1, cantidad_categorias+1):
+        dato = lt.getElement(categorias, i)
         if category_name.lower() in dato["name"].lower():
             category_id = dato["id"]
     if prueba == False:
-        nueva_lista = videosPorcategoriaPais(catalog["videos"],category_id,country)
+        nueva_lista = videosPorcategoriaPais(
+            catalog["videos"], category_id, country)
     else:
         nueva_lista = lt.subList(catalog['videos'], 0, size)
     # organizacion
@@ -110,13 +117,13 @@ def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba
     t_end = time.time_ns()
 
     if prueba:
-        organizada = videosPorcategoriaPais(organizada,category_id,country)
+        organizada = videosPorcategoriaPais(organizada, category_id, country)
 
     t_total = t_end - t_start
     lista_final = lt.newList("ARRAY_LIST")
-    for j in range(1, n+1 ):
-        if j <= lt.size(organizada) and j> 0:
-            lt.addLast(lista_final,lt.getElement(organizada,j))
+    for j in range(1, n+1):
+        if j <= lt.size(organizada) and j > 0:
+            lt.addLast(lista_final, lt.getElement(organizada, j))
         else:
             pass
     return lista_final, t_total
@@ -132,11 +139,12 @@ def comparaciónTitulo(elemento1, elemento2):
     else:
         return False
 
+
 def dividirPais(catalog, pais):
     lista = lt.newList("ARRAY_LIST")
     longitud = lt.size(catalog["videos"])
-    for i in range(1,longitud+1):
-        video = lt.getElement(catalog["videos"],i)
+    for i in range(1, longitud+1):
+        video = lt.getElement(catalog["videos"], i)
         if video["country"] == pais:
             lt.addLast(lista, video)
     return lista
@@ -148,23 +156,24 @@ def agregarTrending(lista_videos):
     cant_videos = lt.size(videos)
     iguales = 1
     inicial = 2
-    actual = lt.getElement(videos,1)
-    while inicial<= cant_videos:
-        nuevo = lt.getElement(videos,inicial)
+    actual = lt.getElement(videos, 1)
+    while inicial <= cant_videos:
+        nuevo = lt.getElement(videos, inicial)
         if nuevo["title"] == actual["title"]:
             iguales += 1
             inicial += 1
         else:
             elemento = nuevo
             elemento["dias_trending"] = iguales
-            lt.addLast(nueva_lista,elemento)
+            lt.addLast(nueva_lista, elemento)
             iguales = 1
             inicial += 1
             actual = nuevo
     elemento = nuevo
     elemento["dias_trending"] = iguales
-    lt.addLast(nueva_lista,elemento)
+    lt.addLast(nueva_lista, elemento)
     return nueva_lista
+
 
 def obtenerRatio(elemento):
     likes = int(elemento["likes"])
@@ -174,6 +183,7 @@ def obtenerRatio(elemento):
     else:
         ratio = likes
     return ratio
+
 
 def comparacionDiasRatioPais(elemento1, elemento2):
     dias1 = elemento1["dias_trending"]
@@ -190,6 +200,7 @@ def comparacionDiasRatioPais(elemento1, elemento2):
         else:
             return False
 
+
 def requerimiento2(catalog, country):
     lista_pais = dividirPais(catalog, country)
     lista_por_titulo = agregarTrending(lista_pais)
@@ -200,7 +211,7 @@ def requerimiento2(catalog, country):
     for i in range(1,longitud+1):
         """
     elemento = lt.getElement(nueva_lista, 1)
-    #if elemento["country"].lower() == country.lower():
+    # if elemento["country"].lower() == country.lower():
     ratio = str(obtenerRatio(elemento))
     dias = elemento["dias_trending"]
     datos = lt.newList("ARRAY_LIST")
@@ -212,10 +223,70 @@ def requerimiento2(catalog, country):
     return datos
 
 
+# Requerimiento 3:
+
+def requerimiento3(catalog, category_name):
+    id = category_name_id(catalog, category_name)
+    filtered_list = filter_by_category_ratio(catalog, id)
+    trending_list = agregarTrending(filtered_list)
+    ordered_trending = mergesort.sort(trending_list, cmp_by_trending)
+    top_video = lt.getElement(ordered_trending, lt.size(ordered_trending))
+    data = (top_video['title'], top_video['channel_title'],
+            id, obtenerRatio(top_video), top_video['dias_trending'])
+    return data
 
 
+def category_name_id(catalog, category_name):
+    '''
+    Recibe como parámetro el nombre de una
+    categoria y retorna el id correspondiente
+    '''
+    id = None
+    catalog = catalog['categorias']
+    length = lt.size(catalog)
+    i = 1
+    while i <= length:
+        element = lt.getElement(catalog, i)
+        name1 = category_name.lower().strip()
+        name2 = element['name'].lower().strip()
+        if name1 in name2:
+            id = element['id']
+            break
+        i += 1
 
-#requerimiento 4
+    return id
+
+
+def filter_by_category_ratio(catalog, category_id):
+    new_list = lt.newList('ARRAY_LIST')
+    catalog = catalog['videos']
+    length = lt.size(catalog)
+    i = 1
+    while i <= length:
+        element = lt.getElement(catalog, i)
+        ratio = obtenerRatio(element)
+        if element['category_id'] == category_id and ratio > 20:
+            lt.addLast(new_list, element)
+        i += 1
+
+    return new_list
+
+
+def cmp_by_trending(element1, element2):
+    compare = None
+    trending1 = element1['dias_trending']
+    trending2 = element2['dias_trending']
+    if trending2 == trending1:
+        compare = False
+    elif trending2 < trending1:
+        compare = False
+    else:
+        compare = True
+
+    return compare
+
+
+# requerimiento 4
 def separarPaisTags(catalog, country, tag):
     videos = catalog["videos"]
     longitud_videos = lt.size(videos)
@@ -235,11 +306,12 @@ def comparacionComentarios(elemento1, elemento2):
     else:
         return False
 
+
 def eliminarRepetidos(videos):
     longitud = lt.size(videos)
     video1 = lt.firstElement(videos)
     lista = lt.newList("ARRAY_LIST")
-    for i in range(2, longitud +1):
+    for i in range(2, longitud + 1):
         video2 = lt.getElement(videos, i)
         if video1["title"] != video2["title"]:
             lt.addLast(lista, video1)
@@ -253,15 +325,13 @@ def requerimiento4(catalog, country, tag, n):
     organizada = eliminarRepetidos(organizada)
     entregar = lt.newList("ARRAY_LIST")
     i = 1
-    while i<= n: 
+    while i <= n:
         if lt.size(organizada) >= i:
             lt.addLast(entregar, lt.getElement(organizada, i))
             i += 1
         else:
             i = n+1
     return entregar
-
-
 
 
 # Funciones de consulta

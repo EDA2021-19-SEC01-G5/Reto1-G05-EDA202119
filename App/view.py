@@ -45,6 +45,7 @@ def printMenu():
     print("1- Cargar información en el catálogo")
     print("2- Conocer los videos con mas likes que son tendencia en un pais en la categoria deseada.")
     print("3- Obtener el video que mas dias ha sido trending en un pais especifico, cuyo ratio_likes_dislikes es altamente positivo.")
+    print("4- Obtener el video que más dias ha sido trending para una categoría específica cuya percepción es sumamente positiva. ")
     print("5- Conocer los n videos diferentes con mas comentarios en un pais con un tag especifico.")
 
 
@@ -71,7 +72,7 @@ def printPrimervideo(catalog):
     print("Fecha de trending : ", elemento["trending_date"])
     print("Pais : ", elemento["country"])
     print("Likes : ", elemento["likes"])
-    print("Dislikes : ",elemento["dislikes"], "\n")
+    print("Dislikes : ", elemento["dislikes"], "\n")
     print(elemento.keys())
 
 # requerimiento 1, con division de libros por pais y categoria, para organizar una menor cantidad
@@ -110,7 +111,17 @@ def requerimiento2(catalog, country):
     print("\n")
 
 
-
+def requerimiento3(catalog, category_name):
+    header = ["\nTitulo: ", "Nombre del canal: ",
+              "ID de Categoria: ", "ratio_likes_dislikes: ", "Dias: "]
+    print("Encontrando los archivos ... \n")
+    data = controller.requerimiento3(catalog, category_name)
+    if len(data) != 5:
+        print("No se encontraron datos para la categoria ingresada")
+    else:
+        for i in range(len(data)):
+            print(header[i], data[i])
+    print("\n")
 
 
 def requerimiento4(catalog, country, tag, n):
@@ -119,7 +130,8 @@ def requerimiento4(catalog, country, tag, n):
     longitud_lista = lt.size(lista)
     if n != longitud_lista:
         print("No fue posible encontrar la cantidad de datos pedidos. \nSe entregan la cantidad maxima posible. \n")
-    header = ["title","channel_title", "publish_time", "views", "likes", "dislikes", "comment_count", "tags"]
+    header = ["title", "channel_title", "publish_time",
+              "views", "likes", "dislikes", "comment_count", "tags"]
     datos = []
     for i in range(1, longitud_lista+1):
         datos.append([])
@@ -127,7 +139,6 @@ def requerimiento4(catalog, country, tag, n):
         for j in range(len(header)):
             datos[i-1].append(video[header[j]])
     print(tabulate(datos, headers=header))
-
 
 
 """
@@ -240,9 +251,15 @@ while True:
             "Ingrese el pais del cual quiere obtener la información: ")
         requerimiento2(catalog, country)
 
+    elif int(inputs[0]) == 4:
+        category_name = input(
+            "Ingrese la categoría de la cual quiere obtener la información: "
+        )
+        requerimiento3(catalog, category_name)
 
     elif int(inputs[0]) == 5:
-        country = input("Ingrese el pais del cual quiere obtener la información: ")
+        country = input(
+            "Ingrese el pais del cual quiere obtener la información: ")
         tag = input("Ingrese el tag del cual quiere obtener la información: ")
         n = int(input("Ingrese la cantidad de elemento que desea obtener: "))
         requerimiento4(catalog, country, tag, n)
