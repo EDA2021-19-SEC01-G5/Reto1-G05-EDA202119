@@ -25,7 +25,6 @@
  """
 
 
-import time
 from DISClib.DataStructures.arraylist import addLast, getElement, newList
 import config as cf
 from DISClib.ADT import list as lt
@@ -106,7 +105,7 @@ def comparacionLikes(elemento1, elemento2):
         return False
 
 
-def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba, size):
+def requerimiento1(catalog, category_name, country, n, tipo_organizacion):
     '''
     Retorna los n videos con más likes en un país y 
     categoria determinados
@@ -114,27 +113,18 @@ def requerimiento1(catalog, category_name, country, n, tipo_organizacion, prueba
     opciones = {"0": selectionsort.sort, "1": insertionsort.sort,
                 "2": shellsort.sort, "3": quicksort.sort, "4": mergesort.sort}
     category_id = category_name_id(catalog, category_name)
-    if prueba == False:
-        nueva_lista = videosPorcategoriaPais(
+    nueva_lista = videosPorcategoriaPais(
             catalog["videos"], category_id, country)
-    else:
-        nueva_lista = lt.subList(catalog['videos'], 0, size)
     # organizacion
-    t_start = time.time_ns()
     organizada = opciones[tipo_organizacion](nueva_lista, comparacionLikes)
-    t_end = time.time_ns()
-
-    if prueba:
-        organizada = videosPorcategoriaPais(organizada, category_id, country)
     # Crear lista de retorno
-    t_total = t_end - t_start
     lista_final = lt.newList("ARRAY_LIST")
     for j in range(1, n+1):
         if j <= lt.size(organizada) and j > 0:
             lt.addLast(lista_final, lt.getElement(organizada, j))
         else:
             pass
-    return lista_final, t_total
+    return lista_final
 
 
 # requerimiento 2
